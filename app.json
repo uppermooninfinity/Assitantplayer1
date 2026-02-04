@@ -1,0 +1,69 @@
+{
+  "name": "Telegram Music Bot",
+  "description": "A powerful Telegram music bot with voice chat support",
+  "repository": "https://github.com/yourusername/telegram-music-bot",
+  "logo": "https://telegra.ph/file/music-bot-logo.png",
+  "keywords": [
+    "telegram",
+    "bot",
+    "music",
+    "voice-chat",
+    "pytgcalls"
+  ],
+  "env": {
+    "API_ID": {
+      "description": "Get this value from https://my.telegram.org",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "Get this value from https://my.telegram.org",
+      "required": true
+    },
+    "BOT_TOKEN": {
+      "description": "Get bot token from @BotFather",
+      "required": true
+    },
+    "STRING_SESSION": {
+      "description": "Generate using generate_session.py script",
+      "required": true
+    },
+    "LOGGER_GROUP_ID": {
+      "description": "Telegram group ID for logs (with -100 prefix)",
+      "required": true
+    },
+    "MONGODB_URI": {
+      "description": "MongoDB connection string",
+      "required": true
+    },
+    "YOUTUBE_API_KEY": {
+      "description": "YouTube Data API key (optional)",
+      "required": false
+    },
+    "YOUTUBE_COOKIES_PATH": {
+      "description": "Path to YouTube cookies file (optional)",
+      "value": "cookies.txt",
+      "required": false
+    },
+    "SPOTIFY_CLIENT_ID": {
+      "description": "Spotify Client ID (optional)",
+      "required": false
+    },
+    "SPOTIFY_CLIENT_SECRET": {
+      "description": "Spotify Client Secret (optional)",
+      "required": false
+    },
+    "OWNER_ID": {
+      "description": "Your Telegram user ID",
+      "required": true
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    },
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+    }
+  ],
+  "stack": "heroku-22"
+}

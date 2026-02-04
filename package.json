@@ -1,0 +1,23 @@
+{
+  "name": "telegram-music-bot",
+  "version": "1.0.0",
+  "description": "A powerful Telegram music bot with voice chat support",
+  "private": true,
+  "scripts": {
+    "start": "python bot.py",
+    "generate-session": "python generate_session.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/telegram-music-bot"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "music",
+    "voice-chat",
+    "pytgcalls"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
