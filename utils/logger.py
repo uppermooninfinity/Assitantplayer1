@@ -7,47 +7,75 @@ import psutil
 
 logger = logging.getLogger(__name__)
 
+
 async def send_startup_log(bot: Client, bot_info, assistant_info, start_time):
+    """
+    Sends startup log to logger group.
+    This function is FAIL-SAFE:
+    - If chat_id is invalid
+    - If bot has no permission
+    - If bot is not in group
+    - If Telegram errors
+    Bot will continue running normally.
+    """
     try:
-        system_info = f"""
-**Bot Started Successfully**
+        # safely resolve chat id
+        try:
+            chat_id = int(config.LOGGER_GROUP_ID)
+        except Exception:
+            logger.warning("LOGGER_GROUP_ID is invalid or not set, skipping startup log")
+            return
 
-**Bot Information:**
-Name: {bot_info.first_name}
-Username: @{bot_info.username}
-ID: `{bot_info.id}`
-
-**Assistant Information:**
-Name: {assistant_info.first_name}
-Username: @{assistant_info.username}
-ID: `{assistant_info.id}`
-
-**System Information:**
-Platform: {platform.system()} {platform.release()}
-Python: {platform.python_version()}
-CPU Cores: {psutil.cpu_count()}
-RAM: {round(psutil.virtual_memory().total / (1024**3), 2)} GB
-
-**Start Time:**
-{start_time.strftime('%Y-%m-%d %H:%M:%S UTC')}
-
-Bot is now running and ready to serve!
-"""
+        system_info = (
+            "**Bot Started Successfully**\n\n"
+            "**Bot Information:**\n"
+            f"Name: {bot_info.first_name}\n"
+            f"Username: @{bot_info.username}\n"
+            f"ID: `{bot_info.id}`\n\n"
+            "**Assistant Information:**\n"
+            f"Name: {assistant_info.first_name}\n"
+            f"Username: @{assistant_info.username}\n"
+            f"ID: `{assistant_info.id}`\n\n"
+            "**System Information:**\n"
+            f"Platform: {platform.system()} {platform.release()}\n"
+            f"Python: {platform.python_version()}\n"
+            f"CPU Cores: {psutil.cpu_count()}\n"
+            f"RAM: {round(psutil.virtual_memory().total / (1024 ** 3), 2)} GB\n\n"
+            "**Start Time:**\n"
+            f"{start_time.strftime('%Y-%m-%d %H:%M:%S UTC')}\n\n"
+            "Bot is now running and ready to serve!"
+        )
 
         await bot.send_message(
-            config.LOGGER_GROUP_ID,
-            system_info
+            chat_id=chat_id,
+            text=system_info,
+            parse_mode="markdown"
         )
-        logger.info("Startup log sent to logger group")
+
+        logger.info("Startup log sent successfully")
 
     except Exception as e:
-        logger.error(f"Failed to send startup log: {e}")
+        # swallow ALL telegram-related errors
+        logger.warning(f"Startup log skipped: {e}")
+
 
 async def log_to_group(bot: Client, message: str):
+    """
+    Generic logger.
+    Will NEVER crash the bot.
+    """
     try:
+        try:
+            chat_id = int(config.LOGGER_GROUP_ID)
+        except Exception:
+            return
+
         await bot.send_message(
-            config.LOGGER_GROUP_ID,
-            message
+            chat_id=chat_id,
+            text=message,
+            parse_mode="markdown"
         )
-    except Exception as e:
-        logger.error(f"Failed to send log to group: {e}")
+
+    except Exception:
+        # silently ignore all errors
+        pass
